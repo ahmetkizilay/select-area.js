@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Test</title>
+        <link rel="stylesheet" type="text/css" href="css/select-area.css">
+        <style>
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro);
+
+* {
+    font-family: 'Source Sans Pro', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+h1 {
+    font-size: 72px;
+    line-height: 80px;
+}
+
+h2 {
+    line-height: 72px;
+}
+
+#header {
+    text-align: center;
+    color: #222;
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    text-align: center;
+}
+
+#tracker {
+    background-color: #fff;
+    margin-left: 10px;
+    margin-top: 10px;
+    padding-left: 5px;
+    width: 200px;
+    border: 1px solid #888;
+    border-radius: 2px;
+    z-index: 200;
+}
+
+.action {
+    line-height: 25px;
+    margin-top: 10px;
+    margin-left: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 20px;
+    position: relative;
+}
+        </style>
+    </head>
+    <body>
+        <div id="header">
+            <h1>select-area.js</h1>
+        </div>
+        <div id="content">
+            <div id="main">
+                <p>This is a javascript library to select a region on the screen.</p>
+                <a href="svg-capture.html">Take a SVG screenshot</a>
+            </div>
+        </div>
+        <button id="btnClose" class="action">Hide</button>
+        <div id="tracker">
+            <span>select a region</span>
+        </div>
+
+        <script type="text/javascript" src="js/select-area.js"></script>
+        <script type="text/javascript">
+            var tracker = document.querySelector('#tracker span');
+            var setupWall = function(target) {
+
+                wall = createWallFor(target);
+
+                wall.onSelectionStart(function () {
+                    tracker.innerHTML = 'select a region';
+                });
+
+                wall.onSelectionChange(function (result) {
+                    tracker.innerHTML = 'l: ' + result.left + ', t: ' + result.top + ', w: ' + result.width + ', h: ' + result.height;
+                });
+
+                wall.onSelected(function (result) {
+                    tracker.innerHTML = 'l: ' + result.left + ', t: ' + result.top + ', w: ' + result.width + ', h: ' + result.height;
+                });
+            };
+
+            var btnClose = document.querySelector('#btnClose');
+            btnClose.addEventListener('click', function () {
+                if(wall) {
+                    wall.close();
+                    wall = null;
+
+                    this.innerHTML = 'SHOW';
+                }
+                else {
+                    setupWall("#main");
+
+                    this.innerHTML = 'HIDE';
+                }
+            });
+
+            setupWall("#main");
+        </script
+    </body>
+</html>

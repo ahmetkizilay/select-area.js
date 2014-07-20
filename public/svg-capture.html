@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Screen Capture with SVG</title>
+        <link rel="stylesheet" type="text/css" href="css/select-area.css"> 
+        <style>
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro);
+
+* {
+    font-family: 'Source Sans Pro', sans-serif;
+    padding: 0;
+    margin: 0;
+}
+
+h1 {
+    font-size: 72px;
+    text-transform: uppercase;
+}
+
+ul {
+    list-style: none;
+}
+
+#header {
+    line-height: 80px;
+    text-align: center;
+    color: #222;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+.action {
+    line-height: 25px;
+    margin-top: 10px;
+    margin-left: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 20px;
+    position: relative;
+}
+
+#instructions {
+    position: relative;
+    background-color: #eee;
+    margin-left: 10px;
+    margin-top: 10px;
+    padding-left: 5px;
+    width: 200px;
+    border: 1px solid #888;
+    border-radius: 4px;
+}
+
+        </style>
+    </head>
+    <body>
+        <div id="header">
+            <h1>select area for screen capture</h1>
+        </div>
+        <div id="main">
+        </div>
+        <canvas id="canvas" style="display: none"></canvas>
+        <button id="btnEnableCapture" class="action">Enable Capture</button>
+        <button id="btnSave" class="action">Save</button>
+        <div id="instructions">
+            <ul>
+                <li>- Click Enable Capture</li>
+                <li>- Select Region To Save</li>
+                <li>- Click Save</li>
+                <li>- Click Disable Capture</li>
+            </ul>
+        </div>
+        <script type="text/javascript" src="js/d3.v3.min.js"></script>
+        <script type="text/javascript" src="js/select-area.js"></script>
+        <script type="text/javascript">
+
+            var btnCaptureMode = document.querySelector('#btnEnableCapture');
+            var btnSave = document.querySelector('#btnSave');
+            btnSave.style.display = 'none';
+
+            var colorScheme = d3.scale.category20();
+            var svg = d3.select('#main').append('svg')
+                        .attr('id', 'map')
+                        .attr('width', document.querySelector('svg').offsetWidth)
+                        .attr('height', document.querySelector('svg').offsetHeight);
+
+            var rect = svg.append('rect')
+                .attr('width', document.querySelector('svg').offsetWidth)
+                .attr('height', document.querySelector('svg').offsetHeight)
+                .style('fill', "#fafafa");
+
+            for(var i = 0; i < 50; i += 1) {
+                svg.append('circle')
+                    .attr('r', 5 + Math.random() * 20)
+                    .attr('cx', Math.random() * document.querySelector('svg').offsetWidth)
+                    .attr('cy', Math.random() * document.querySelector('svg').offsetHeight)
+                    .style('fill', colorScheme(Math.floor(Math.random() * 20)));
+            }
+
+            window.addEventListener('resize', function () {
+                svg.attr('width', document.querySelector('svg').offsetWidth);
+                svg.attr('height', document.querySelector('svg').offsetHeight);
+
+                rect.attr('width', document.querySelector('svg').offsetWidth);
+                rect.attr('height', document.querySelector('svg').offsetHeight);
+
+            }, true);
+
+            var latestResult;
+            btnSave.addEventListener('click', function () {
+                var result = latestResult;
+                if(!result) {
+                    return;
+                }
+
+                var canvas = document.querySelector("canvas");
+                canvas.setAttribute('width', result.width);
+                canvas.setAttribute('height', result.height);
+
+                var html = svg.attr("version", 1.1)
+                    .attr("xmlns", "http://www.w3.org/2000/svg")
+                    .node().outerHTML;
+
+
+                var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
+                var img = '<img src="' + imgsrc + '">'; 
+                d3.select("#svgdataurl").html(img);
+
+                var context = canvas.getContext("2d");
+
+                var image = new Image;
+                image.src = imgsrc;
+                image.onload = function() {
+                    context.drawImage(image,
+                        result.left, result.top,
+                        result.width, result.height,
+                        0, 0, result.width, result.height);
+
+                  var canvasdata = canvas.toDataURL("image/png");
+
+                  var pngimg = '<img src="'+canvasdata+'">'; 
+                  d3.select("#pngdataurl").html(pngimg);
+
+                  var a = document.createElement("a");
+                  a.download = "capture" + getDateString() + ".png";
+                  a.href = canvasdata;
+                  a.click();
+                };
+            });
+
+            var wall;
+            btnCaptureMode.addEventListener('click', function () {
+                if(this.innerHTML === 'Enable Capture') {
+                    wall = createWallFor("#map");
+
+                    wall.onSelectionStart(function () {
+                        btnSave.style.display = 'none';
+                    });
+
+                    wall.onSelected(function (result) {
+                        btnSave.style.display = 'inline';
+                        latestResult = result;
+                    });
+
+                    this.innerHTML = 'Disable Capture';
+                }
+                else {
+                    if(wall) {
+                        wall.close();
+                        this.innerHTML = 'Enable Capture';
+                        btnSave.style.display = 'none';
+                    }
+                }
+
+            }, true);
+
+            function getDateString() {
+                var date = new Date();
+                return date.getFullYear() + "-" + (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds();
+            }
+
+        </script>
+    </body>
+</html>
