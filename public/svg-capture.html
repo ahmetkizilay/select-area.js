@@ -91,28 +91,28 @@ svg {
             var colorScheme = d3.scale.category20();
             var svg = d3.select('#main').append('svg')
                         .attr('id', 'map')
-                        .attr('width', document.querySelector('svg').offsetWidth)
-                        .attr('height', document.querySelector('svg').offsetHeight);
+                        .attr('width', document.querySelector('svg').clientWidth)
+                        .attr('height', document.querySelector('svg').clientHeight);
 
             var rect = svg.append('rect')
-                .attr('width', document.querySelector('svg').offsetWidth)
-                .attr('height', document.querySelector('svg').offsetHeight)
+                .attr('width', document.querySelector('svg').clientWidth)
+                .attr('height', document.querySelector('svg').clientHeight)
                 .style('fill', "#fafafa");
 
             for(var i = 0; i < 50; i += 1) {
                 svg.append('circle')
                     .attr('r', 5 + Math.random() * 20)
-                    .attr('cx', Math.random() * document.querySelector('svg').offsetWidth)
-                    .attr('cy', Math.random() * document.querySelector('svg').offsetHeight)
+                    .attr('cx', Math.random() * document.querySelector('svg').clientWidth)
+                    .attr('cy', Math.random() * document.querySelector('svg').clientHeight)
                     .style('fill', colorScheme(Math.floor(Math.random() * 20)));
             }
 
             window.addEventListener('resize', function () {
-                svg.attr('width', document.querySelector('svg').offsetWidth);
-                svg.attr('height', document.querySelector('svg').offsetHeight);
+                svg.attr('width', document.querySelector('svg').clientWidth);
+                svg.attr('height', document.querySelector('svg').clientHeight);
 
-                rect.attr('width', document.querySelector('svg').offsetWidth);
-                rect.attr('height', document.querySelector('svg').offsetHeight);
+                rect.attr('width', document.querySelector('svg').clientWidth);
+                rect.attr('height', document.querySelector('svg').clientHeight);
 
             }, true);
 
