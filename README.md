@@ -30,6 +30,6 @@ wall.onSelected(function (result) {
 ```
 
 #### See also
-Live examples are available [here](https://artsince.github.io/select-area.js/index.html) and [here](https://artsince.github.io/select-area.js/svg-capture.html).
+Live examples are available [here](https://ahmetkizilay.github.io/select-area.js/index.html) and [here](https://ahmetkizilay.github.io/select-area.js/svg-capture.html).
 
-Also checkout my other [repository](https://github.com/artsince/highlight-area.js) for programmatically highlighting HTML elements and mouse tracking.
+Also checkout my other [repository](https://github.com/ahmetkizilay/highlight-area.js) for programmatically highlighting HTML elements and mouse tracking.
